@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aoc-2024/utils"
 	"fmt"
 )
 
@@ -9,5 +10,5 @@ func add(x, y int) int {
 }
 
 func main() {
-	fmt.Println(add(2, 3))
+	fmt.Println(add(2, 3), utils.Works())
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aoc-2024/utils"
 	"flag"
 	"fmt"
 	"os"
@@ -8,18 +9,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func printArr(arr []string) {
-	for _, val := range arr {
-		fmt.Println(val)
-	}
-}
 
 func distInt(num1, num2 int) int {
 	if num1 > num2 {
@@ -31,7 +20,7 @@ func distInt(num1, num2 int) int {
 
 func main() {
 	dat, err := os.ReadFile("input.txt")
-	check(err)
+	utils.Check(err)
 	text := string(dat[:])
 	split := strings.Fields(text)
 	list1 := make([]string, 0)
@@ -64,9 +53,9 @@ func part1(list1, list2 []string) {
 	var dist int
 	for i := 0; i < len(list1); i++ {
 		num1, err := strconv.Atoi(list1[i])
-		check(err)
+		utils.Check(err)
 		num2, err := strconv.Atoi(list2[i])
-		check(err)
+		utils.Check(err)
 		dist += distInt(num1, num2)
 	}
 	fmt.Printf("PART1 Total distance is: %d\n", dist)
@@ -86,7 +75,7 @@ func part2(list1, list2 []string) {
 
 	for key := range m {
 		num, err := strconv.Atoi(key)
-		check(err)
+		utils.Check(err)
 		similarity += num * m[key]
 	}
 
