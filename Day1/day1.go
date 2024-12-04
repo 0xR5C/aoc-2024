@@ -19,6 +19,7 @@ func distInt(num1, num2 int) int {
 }
 
 func main() {
+	fmt.Println("Day1")
 	dat, err := os.ReadFile("input.txt")
 	utils.Check(err)
 	text := string(dat[:])
