@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc-2024/utils"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -14,8 +15,17 @@ func main() {
 	input := string(dat[:])
 	lines := strings.Fields(input)
 
-	part1(lines)
-	part2(lines)
+	partPtr := flag.Int("part", 0, "Choose part to run")
+	flag.Parse()
+
+	if *partPtr == 1 {
+		part1(lines)
+	} else if *partPtr == 2 {
+		part2(lines)
+	} else {
+		part1(lines)
+		part2(lines)
+	}
 }
 
 func part1(lines []string) {
