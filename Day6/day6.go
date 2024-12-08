@@ -65,8 +65,7 @@ func part2(mapGuard [][]string, guardX, guardY int) {
 	for i := range mapPath {
 		for j := range mapPath[i] {
 			if mapPath[i][j] == "X" {
-				ok := checkNewObstruction(mapGuard, guardX, guardY, j, i)
-				if ok {
+				if ok := checkNewObstruction(mapGuard, guardX, guardY, j, i); ok {
 					sum++
 				}
 
@@ -78,7 +77,7 @@ func part2(mapGuard [][]string, guardX, guardY int) {
 }
 
 func guardRoute(mapGuard [][]string, guardX, guardY int) [][]string {
-	//create copy
+	// Create copy
 	mapPath := [][]string{}
 	for i := range mapGuard {
 		mapPath = append(mapPath, []string{})
@@ -148,22 +147,25 @@ func checkNewObstruction(mapGuard [][]string, guardX, guardY, obsX, obsY int) bo
 		return false
 	}
 
-	//create copy
+	// Create copy
 	mapPath := [][]string{}
 	for i := range mapGuard {
 		mapPath = append(mapPath, []string{})
 		mapPath[i] = append(mapPath[i], mapGuard[i]...)
 	}
 
-	// set new Obstruction
+	// Set new Obstruction
 	mapPath[obsY][obsX] = "Ο"
 
 	var steps int
 
 	for ; guardX >= 0 && guardY >= 0 && guardY < len(mapPath) && guardX < len(mapPath[guardY]); steps++ {
+		// Loop detection
 		if steps >= 2*(len(mapPath)-1)*(len(mapPath[guardY])-1) {
 			return true
 		}
+
+		// Traverse path
 		guardPos := mapPath[guardY][guardX]
 		switch guardPos {
 		case "^":
