@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc-2024/utils"
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -33,7 +34,18 @@ func main() {
 		tempNums := strings.Fields(split[1])
 		equations[i] = Equation{tempTest, 0, utils.ArrayAtoi(tempNums)}
 	}
-	part1(equations)
+
+	partPtr := flag.Int("part", 0, "Choose part to run")
+	flag.Parse()
+
+	if *partPtr == 1 {
+		part1(equations)
+	} else if *partPtr == 2 {
+		part2(equations)
+	} else {
+		part1(equations)
+		part2(equations)
+	}
 
 }
 
@@ -45,7 +57,18 @@ func part1(input []Equation) {
 			sum += input[i].test
 		}
 	}
-	fmt.Println(sum)
+	fmt.Printf("PART1 The total calibration is %d\n", sum)
+}
+
+func part2(input []Equation) {
+	var sum int
+	for i := range input {
+		checkOperatorPart2(&input[i], input[i].nums[0], 1)
+		if input[i].count != 0 {
+			sum += input[i].test
+		}
+	}
+	fmt.Printf("PART2 The total calibration with || is %d\n", sum)
 }
 
 func checkOperator(eq *Equation, sum, i int) bool {
@@ -66,13 +89,60 @@ func checkOperator(eq *Equation, sum, i int) bool {
 		} else {
 			return false
 		}
-
 	} else {
 		tempPlus := sum + eq.nums[i]
 		tempMul := sum * eq.nums[i]
 		okPlus := checkOperator(eq, tempPlus, i+1)
 		okMul := checkOperator(eq, tempMul, i+1)
 		if (tempPlus <= eq.test && okPlus) || (tempMul <= eq.test && okMul) {
+			return true
+		}
+
+		return false
+
+	}
+
+}
+
+func checkOperatorPart2(eq *Equation, sum, i int) bool {
+	if len(eq.nums)-1 == i {
+		// Final element of Operation
+		tempPlus := sum + eq.nums[i]
+		tempMul := sum * eq.nums[i]
+
+		tempConc, err := strconv.Atoi(strconv.Itoa(sum) + strconv.Itoa(eq.nums[i]))
+		utils.Check(err)
+
+		if tempPlus == eq.test {
+			eq.count++
+		}
+
+		if tempMul == eq.test {
+			eq.count++
+		}
+
+		if tempConc == eq.test {
+			eq.count++
+		}
+
+		if tempMul == eq.test || tempPlus == eq.test || tempConc == eq.test {
+			return true
+		} else {
+			return false
+		}
+
+	} else {
+		tempPlus := sum + eq.nums[i]
+		tempMul := sum * eq.nums[i]
+
+		tempConc, err := strconv.Atoi(strconv.Itoa(sum) + strconv.Itoa(eq.nums[i]))
+		utils.Check(err)
+
+		okPlus := checkOperatorPart2(eq, tempPlus, i+1)
+		okMul := checkOperatorPart2(eq, tempMul, i+1)
+		okConc := checkOperatorPart2(eq, tempConc, i+1)
+
+		if (tempPlus <= eq.test && okPlus) || (tempMul <= eq.test && okMul) || (tempConc <= eq.test && okConc) {
 			return true
 		}
 
