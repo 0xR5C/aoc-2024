@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc-2024/utils"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -32,8 +33,17 @@ func main() {
 		}
 	}
 
-	// find antinodes
-	part1(antennas, len(lines), len(lines[0]))
+	partPtr := flag.Int("part", 0, "Choose part to run")
+	flag.Parse()
+
+	if *partPtr == 1 {
+		part1(antennas, len(lines), len(lines[0]))
+	} else if *partPtr == 2 {
+		part2(antennas, len(lines), len(lines[0]))
+	} else {
+		part1(antennas, len(lines), len(lines[0]))
+		part2(antennas, len(lines), len(lines[0]))
+	}
 }
 
 func part1(input map[string][]Coords, lenX, lenY int) {
@@ -72,5 +82,73 @@ func part1(input map[string][]Coords, lenX, lenY int) {
 			}
 		}
 	}
-	fmt.Printf("The distinct antinodes are %d\n", sum)
+	fmt.Printf("PART1 The unique antinodes are %d\n", sum)
+}
+
+func part2(input map[string][]Coords, lenX, lenY int) {
+	var sum int
+	set := make(map[Coords]bool, 0)
+	for _, val := range input {
+		for i := 0; i < len(val)-1; i++ {
+			for j := i + 1; j < len(val); j++ {
+				distX := utils.AbsDiff(val[i].x, val[j].x)
+				distY := utils.AbsDiff(val[i].y, val[j].y)
+				var cX, cY int
+
+				// First antenna direction
+				cX = val[i].x
+				cY = val[i].y
+				tempCoords := Coords{cX, cY}
+
+				for cX >= 0 && cX < lenX && cY >= 0 && cY < lenY {
+					if _, ok := set[tempCoords]; !ok {
+						set[tempCoords] = true
+						sum++
+					}
+
+					// New coords
+					if val[i].x <= val[j].x {
+						cX -= distX
+					} else {
+						cX += distX
+					}
+
+					if val[i].y <= val[j].y {
+						cY -= distY
+					} else {
+						cY += distY
+					}
+
+					tempCoords = Coords{cX, cY}
+				}
+
+				// Second antenna direction
+				cX = val[j].x
+				cY = val[j].y
+				tempCoords = Coords{cX, cY}
+
+				for cX >= 0 && cX < lenX && cY >= 0 && cY < lenY {
+					if _, ok := set[tempCoords]; !ok {
+						set[tempCoords] = true
+						sum++
+					}
+
+					// New coords
+					if val[i].x <= val[j].x {
+						cX += distX
+					} else {
+						cX -= distX
+					}
+
+					if val[i].y <= val[j].y {
+						cY += distY
+					} else {
+						cY -= distY
+					}
+					tempCoords = Coords{cX, cY}
+				}
+			}
+		}
+	}
+	fmt.Printf("PART2 The unique antinodes are %d\n", sum)
 }
