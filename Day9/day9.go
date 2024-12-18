@@ -19,7 +19,6 @@ func main() {
 }
 
 func part1(disk string) {
-	fmt.Println("PART1")
 	block := createBlocks(disk)
 
 	for i, j := 0, lastNum(block); i < j; i++ {
@@ -40,7 +39,7 @@ func part1(disk string) {
 		utils.Check(err)
 		sum += i * num
 	}
-	fmt.Println(sum)
+	fmt.Printf("PART1 The total sum is %d\n", sum)
 }
 
 func createBlocks(disk string) []string {
