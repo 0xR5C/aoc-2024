@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc-2024/utils"
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -15,7 +16,17 @@ func main() {
 	input := string(dat[:])
 	lines := strings.Split(input, "\n")
 
-	part1(lines[0])
+	partPtr := flag.Int("part", 0, "Choose part to run")
+	flag.Parse()
+
+	if *partPtr == 1 {
+		part1(lines[0])
+	} else if *partPtr == 2 {
+		part2(lines[0])
+	} else {
+		part1(lines[0])
+		part2(lines[0])
+	}
 }
 
 func part1(disk string) {
@@ -39,7 +50,51 @@ func part1(disk string) {
 		utils.Check(err)
 		sum += i * num
 	}
-	fmt.Printf("PART1 The total sum is %d\n", sum)
+	fmt.Printf("PART1 The filesystem checksum is %d\n", sum)
+}
+
+func part2(disk string) {
+	fmt.Println("PART2")
+	block := createBlocks(disk)
+	var consecutiveFile int
+	var consecutiveFileVal string
+	for i := lastNum(block); i >= 0; i-- {
+		if block[i] == consecutiveFileVal {
+			consecutiveFile++
+		} else if block[i] != consecutiveFileVal {
+			if consecutiveFileVal != "" {
+				//
+				index := findSpace(block, consecutiveFile, i+1)
+				if index != -1 {
+					for j, k := 0, i+1; j < consecutiveFile; j++ {
+						temp := block[j+index]
+						block[j+index] = block[k]
+						block[k] = temp
+						k++
+					}
+				}
+
+			}
+			if block[i] != "." {
+				consecutiveFile = 1
+				consecutiveFileVal = block[i]
+			} else {
+				consecutiveFile = 0
+				consecutiveFileVal = ""
+			}
+		}
+
+	}
+	var sum int
+	for i, val := range block {
+		if val != "." {
+			num, err := strconv.Atoi(val)
+			utils.Check(err)
+			sum += i * num
+		}
+	}
+	fmt.Printf("PART2 The fileystem checksum is %d\n", sum)
+
 }
 
 func createBlocks(disk string) []string {
@@ -71,6 +126,27 @@ func lastNum(arr []string) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] != "." {
 			return i
+		}
+	}
+	return -1
+}
+
+func findSpace(arr []string, size, index int) int {
+	var consecutiveSpace, iSpace int
+	for i, val := range arr {
+		if i > index {
+			return -1
+		}
+		if val == "." && consecutiveSpace == 0 {
+			consecutiveSpace++
+			iSpace = i
+		} else if val == "." {
+			consecutiveSpace++
+		} else {
+			if consecutiveSpace >= size {
+				return iSpace
+			}
+			consecutiveSpace = 0
 		}
 	}
 	return -1
