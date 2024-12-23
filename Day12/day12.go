@@ -59,9 +59,8 @@ func part1(farm [][]string) {
 	var sum int
 	for i := range arr {
 		sum += arr[i].area * arr[i].perimeter
-		fmt.Println(arr[i].val, arr[i].area, arr[i].perimeter)
 	}
-	fmt.Println(sum)
+	fmt.Printf("The total price is %d\n", sum)
 }
 
 func bfs(farm [][]string, visited [][]bool, x, y int, reg region) region {
